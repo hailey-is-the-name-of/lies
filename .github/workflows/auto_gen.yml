@@ -1,0 +1,30 @@
+name: Auto-generate share pages
+
+on:
+  push:
+    paths:
+      - 'images/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: pip install jinja2
+
+    - name: Generate share pages & update index
+      run: python scripts/gen_share.py
+
+    - name: Commit & push changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "ci: 자동으로 share 페이지 및 index 업데이트"
+        branch: main
